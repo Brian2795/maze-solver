@@ -1,0 +1,7 @@
+% public_sat
+t = [[]]
+f = []
+x = [[x]]
+[and,x,y] = [[x,y]]
+[or,y,x] = [[x],[x,y],[y]]
+[no,x] = [[]]

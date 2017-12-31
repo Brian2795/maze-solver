@@ -1,0 +1,7 @@
+% public_varsOf
+t = [[]]
+f = [[]]
+x = [[x]]
+[and,x,y] = [[x,y]]
+[or,y,x] = [[x,y]]
+[no,x] = [[x]]

@@ -1,0 +1,8 @@
+% public_isprime
+3 is prime
+4 is NOT prime
+31 is prime
+% public_inlang
+[a,a,b,b,a,b] is in lang
+[a,a,a,b,b,a,a,b,b,b] is in lang
+[a,a,a,b,b,a,b,b,b] is NOT in lang

@@ -1,0 +1,19 @@
+% public_eval
+
+t [] = [t]
+t [x] = [t]
+
+f [] = [f]
+f [x] = [f]
+
+x [] = [f]
+x [x] = [t]
+
+[and,x,y] [] = [f]
+[and,x,y] [x] = [f]
+
+[or,y,x] [] = [f]
+[or,y,x] [x] = [t]
+
+[no,x] [] = [t]
+[no,x] [x] = [f]

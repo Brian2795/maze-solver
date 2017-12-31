@@ -1,0 +1,583 @@
+<!--#include virtual="header.html" -->
+
+<body>
+
+<h1 class="title">Project 5 - Prolog Programming</h1>
+<center>
+Due 11:59pm Mon, Jul 18, 2016
+</center>
+
+<p>
+
+</center>
+
+<h2>Errata:</h2>
+<ul>
+<li>Updated on 04/13: Project description is modified. Re-download the project files.</li>
+</ul>
+<h2>Introduction</h2>
+
+<p> For this project you will need to implement a number of functions
+in Prolog that together can be used to find solutions for mazes.  This
+project will provide experience dealing with logic, recursion, lists,
+and other features in Prolog.
+
+<p>
+<b>Extra credit opportunity:</b> Implement a SAT solver
+
+
+</p><h2>Getting Started</h2>
+
+Download the following archive file <a href="p5.zip">p5.zip</a>
+and extract its contents.
+<p>
+Along with files used to make direct submissions to the
+submit server (submit.jar, <a href=".submit">.submit</a>,
+<a href="submit.rb">submit.rb</a>), you will
+find the following project files:
+</p><ul>
+<li>Your Prolog program - <a href="logic.pl">logic.pl</a>
+</li><li>Public tests
+<ul>
+<li> <a href="publicRecursion1.pl">publicRecursion1.pl</a>
+<li> <a href="publicRecursion2.pl">publicRecursion2.pl</a>
+<li> <a href="publicRecursion3.pl">publicRecursion3.pl</a>
+<li> <a href="publicMaze1.pl">publicMaze1.pl</a>
+<li> <a href="publicMaze2.pl">publicMaze2.pl</a>
+</li></ul>
+</li><li>Expected outputs for public tests
+<ul>
+<li> <a href="publicRecursion1.out">publicRecursion1.out</a>
+<li> <a href="publicRecursion2.out">publicRecursion2.out</a>
+<li> <a href="publicRecursion3.out">publicRecursion3.out</a>
+<li> <a href="publicMaze1.out">publicMaze1.out</a>
+<li> <a href="publicMaze2.out">publicMaze2.out</a>
+</li></ul>
+<li>Public test driver - <a href="goTest.pl">goTest.pl</a>
+<li>Maze Converter - <a href="convertMaze.rb">convertMaze.rb</a>
+</ul>
+<p>
+
+The logic.pl file you downloaded contains a number of
+utility functions, and comments describing the functions
+you are required to implement.
+
+<p>
+
+Note that you must implement your functions with the exact
+parameters specified, or else the submit server
+tests will fail.
+
+<h3>Running Public Tests</h3>
+
+The public tests are set up as a number of Prolog programs
+that will call functions from your logic.pl code and test
+them with different inputs. To execute a public test, you
+need to load both logic.pl and the public test file into
+the Prolog interpreter, then call the appropriate public test
+function for each logic.pl function you were required to
+implement.  The public test functions are:
+<ul>
+    <li> public_ackermann
+    <li> public_prod
+    <li> public_fill
+    <li> public_genN
+    <li> public_genXY
+    <li> public_flat
+    <li> public_isprime
+    <li> public_inlang
+    <li> public_stats
+    <li> public_validPath
+    <li> public_findDistance
+    <li> public_solve
+</ul>
+Here's an example of how to run a public test manually:
+<p>
+
+<pre>
+swipl                                 % start prolog
+?- working_directory(C,'path to p5'). % go to p5 directory
+                        % start here if using swipl-win.exe
+?- ['logic.pl'].                      % load your code
+?- ['publicMaze1.pl'].                % load public test
+?- maze1_public.                    % run public test
+etc...
+</pre>
+
+On Windows machines, opening the logic.pl file with swipl-win.exe
+will bring up a window running the Prolog interpreter in the
+directory containing logic.pl, so it is not necessary to
+start swipl or call the function working_directory manually.
+
+<p>
+
+Alternatively, you may run all of the public tests at once using
+the <a href="goTest.pl">goTest.pl</a> public test driver provided.
+It will load logic.pl and all the public tests, then run all
+public tests at once.
+
+<pre>
+swipl                                 % start prolog
+?- working_directory(C,'path to p5'). % go to p5 directory
+?- ['goTest.pl'].                     % load test driver
+                        % start here if using swipl-win.exe
+?- run.                               % run all public tests
+</pre>
+
+<p>
+
+<h3>Prolog Library Functions Allowed</h3>
+
+For this project you should write most code yourself, and
+only use Prolog's built-in and library functions where
+absolutely necessary.  You are not allowed to use any
+library or built-in functions unless they are explicitly
+listed as permitted functions. The only built-in function
+that you are allowed to use for this project are:
+
+<p>
+<table border="1">
+<tr>
+<td align="center"> <b>Type</b>
+<td align="center"> <b>Built-in Functions</b>
+</tr>
+<tr>
+<td align="center"> Arithmetic
+<td align="center">   +, -, *, div, mod, <, =<, >, >=, is, =:=, =\=, floor, float, sqrt
+<tr>
+<td align="center"> Logic
+<td align="center">  ==, =, \==, \=, \+
+<tr>
+<td align="center"> Lists
+<td align="center">  [H|T], [H1,H2|T], [H1,H2,H3|T], etc.
+<tr>
+<td align="center"> List Utilities
+<td align="center">  member(X,L), append(X,Y,R), sort(X,R)
+<tr>
+<td align="center"> Cut
+<td align="center"> !
+<tr>
+<td align="center"> Collecting<br>Solutions
+<td align="center"> findall(X,Y,R), setof(X,Y,R)
+</table>
+
+<p>
+
+Since many functions you need to implement are similar to
+those from previous projects, you may find it useful to
+examine your previous solutions when writing your
+solution in Prolog.
+
+<p>
+
+<h2>Part 1: Recursion </h2>
+
+Write the following recursive functions:
+<p>
+
+<table border="1">
+
+<tr>
+<td> <b>Name</b>
+<td> <b>Parameters</b>
+<td> <b>Example</b>
+</tr>
+
+<tr>
+<td> ackermann(M,N,R)
+<td>
+M=int<br>
+N=int<br>
+&bull; R=the <a href = "http://mathworld.wolfram.com/AckermannFunction.html">ackermann function</a> on M and N<br>
+&bull; M and N will always be given
+<td>
+?- ackermann(0,1,R).<br> R=2. <br>
+?- ackermann(2,3,R).<br> R=9. <br>
+?- ackermann(3,4,R).<br> R=125. <br>
+</tr>
+
+<tr>
+<td> prod(L,R)
+<td>
+L=list of ints<br>
+R=product of elements of L<br>
+&bull; R=1 if L=[]<br>
+&bull; L will always be given
+<td>
+?- prod([1,2,3],R).<br> R=6. <br>
+?- prod([],R).<br> R=1. <br>
+</tr>
+
+<tr>
+<td> fill(N,X,R)
+<td>
+N=int<br>
+X=int<br>
+R=list containing N copies of X<br>
+&bull; R=[] if N=0<br>
+&bull; N will always be given<br>
+&bull; Either X or R will be given
+<td>
+?- fill(4,2,R). <br> R=[2,2,2,2].<br>
+?- fill(4,X,[2,2,2,2]). <br> X=2.<br>
+</tr>
+
+<tr>
+<td> genN(N,R)
+<td>
+N=non-zero positive int<br>
+R=int values between 0 and N-1, inclusive, in ascending order<br>
+&bull; N will always be given
+<td>
+?- genN(2,R).<br>
+R=0;<br>
+R=1.
+</tr>
+
+<tr>
+<td> genXY(N,R)
+<td>
+N=non-zero positive int<br>
+R=pairs [X,Y], where X & Y are values between 0 and N-1, inclusive,<br>
+generated in ascending lexicographic order.<br>
+&bull; N will always be given
+<td>
+?- genXY(2,R).<br>
+R=[0,0];<br>
+R=[0,1];<br>
+R=[1,0];<br>
+R=[1,1].
+</tr>
+
+<tr>
+<td> flat(L,R)
+<td>
+L=list<br>
+R=elements of L concatenated together, preserving relative order,<br>
+first placing non-list elements in a list if necessary<br>
+&bull; R=[] if L=[]<br>
+&bull; L will always be given<br>
+&bull; Only removes one level of list, unlike flatten/2
+<td>
+?- flat([[1],[2,3]],R).<br>
+R=[1,2,3].<br>
+?- flat([1,[2,3]],R).<br>
+R=[1,2,3].<br>
+?- flat([[1,[2]],3],R).<br>
+R=[1,[2],3].<br>
+</tr>
+
+<tr>
+<td> is_prime(N)
+<td>
+N=int<br>
+  Is <tt>true</tt> if the integer <i>N</i> is a prime number.<br>
+  &bull; A simple algorithm for primality checking is to start with
+  the axioms that 2 and 3 are prime numbers (1 is not). Then, an arbitrary
+  number N greater than 3 is prime iff N is not divisible by D, for
+  all D from sqrt(N) up to N-1. You will need to implement a helper
+  function to do this iteration. You will 
+  find <tt>=\=</tt>, <tt>float</tt>, and <tt>sqrt</tt> functions
+  helpful. Note: your algorithm should aim to reject large non-primes
+  quickly, or you might experience timeouts. <br>
+&bull;  N will always be given
+<td>
+?- is_prime(3).<br> true. <br>
+?- is_prime(4).<br> false. <br>
+?- is_prime(31).<br> true. <br>
+</tr>
+
+<tr>
+<td> in_lang(L)
+<td>L=list of atoms <tt>a</tt> and <tt>b</tt><br>
+Is <tt>true</tt> if the list <i>L</i>, viewed as a string, is
+  contained in the language S defined by the following CFG:
+<pre>
+   S -> T | V
+   T -> UU
+   U -> aUb | ab
+   V -> aVb | aWb
+   W -> bWa | ba
+</pre>
+Put another way, the language S is specified as follows:<br>
+  <tt>S = {a^n b^n a^m b^m | n,m >= 1} U {a^n b^m a^m b^n | n,m >= 1} </tt>.<br>
+&bull; L will always be given
+<td>
+ ?- in_lang([a,a,b,b,a,b]).<br>
+true. <br>
+?- in_lang([a,a,a,b,b,a,a,b,b,b]). <br>
+true. <br>
+?- in_lang([a,a,a,b,b,a,b,b,b]). <br>
+false. <br>
+</tr>
+ 
+</tr>
+</tr>
+</table>
+
+<h2>Part 2: Maze solver </h2>
+
+<h3>Maze descriptions</h3>
+
+For this project, the mazes you will compute with will be
+given as Prolog databases. In particular, you will be given
+three kinds of <i>facts</i>
+<ul>
+  <li><b>maze</b>(<i>N,SX,SY,EX,EY</i>). This fact
+  indicates that:
+  <ul>
+          <li> The height and width of the maze is <i>N</i> cells,
+          <li> The default starting position is <i>SX,SY</i>, and
+          <li> The ending position is <i>EX,EY</i>.
+  </ul>
+
+<p>
+
+  <li><b>cell</b>(<i>X,Y,Dirs,Wts</i>). A fact of this form describes
+  a cell in the maze. In particular, it says that the cell
+  at position <i>X,Y,</i> has open walls as described by <i>Dirs</i>,
+  the list of directions. More precisely:
+
+  <ul>
+          <li> The list <i>Dirs</i> will contain at most one of each of the atoms
+          <b>u</b>, <b>d</b>, <b>l</b>, and <b>r</b>, which designate openings
+          going up, down, left, or right, respectively.
+          <li> Recall from project one that the coordinate system places 0,0 in the
+          upper left corner of the maze.
+          <li> The <i>Wts</i> component of the fact indicates the weights granted
+          to paths following the respective direction. That is, each element in
+          <i>Dirs</i> has a corresponding weight in <i>Wts</i>.
+  </ul>
+  As an example, the fact <b>cell</b>(1,0,[<b>r</b>,<b>d</b>],[16.6, 0.89])
+  indicates that the cell at 1,0 has two open walls: one leading to the right
+  (to cell 2,0) with weight 16.6, and one leading down (to cell 1,1) with
+  weight 0.89.
+
+<p>
+
+  <li><b>path</b>(<i>N,SX,SY,Dirs</i>). This fact describes a path
+  named <i>N</i> (a string) through the maze starting at position
+  <i>SX,SY</i> and following the directions given by <i>Dirs</i>. For
+  example, the fact
+  <b>path</b>('path1',0,3,[<b>u</b>,<b>r</b>,<b>u</b>,<b>l</b>,<b>u</b>]) indicates
+  that there is a path 'path1' that starts at 0,3 and follows the
+  given directions to end up at position 0,0.
+<p>
+
+</ul>
+
+<p>
+Based on these maze facts, you need to implement
+the following functions for solving a maze.
+<p>
+
+<table border="1">
+
+<tr>
+<td> <b>Name</b>
+<td> <b>Parameters</b>
+<td> <b>Example</b>
+</tr>
+
+<tr>
+<td> stats(U,D,L,R)
+<td>
+U,D,L,R=number of cells with openings up, down, left, and right.
+<td>
+?- stats(U,D,L,R).<br>
+U = D, D = 8,<br>
+L = R, R = 7.
+</tr>
+</tr>
+
+<tr>
+<td> validPath(N,W)
+<td>
+N=name of valid path (only goes through openings)<br>
+W=float value for weight of path (rounded to 4 decimal places)<br>
+&bull; Return valid paths in same order as in database<br>
+&bull; Use round4(X,Y) :- T1 is X*10000, T2 is round(T1), Y is T2/10000.<br>
+&bull; Apply round4() to final float weight, not intermediate sums.
+<td>
+?- validPath(N,W).<br>
+N = path1,<br>
+W = 99.9958;<br>
+N = path2,<br>
+W = 103.779.
+</tr>
+</tr>
+
+<tr>
+<td> findDistance(L)
+<td>
+L=list of coordinates of cells at distance D from maze start<br>
+&bull; Elements of L are in form [D, [[X1,Y2],[X2,Y2],...]]<br>
+&bull; Values of D range from 0 to D, in ascending order <br>
+&bull; D=distance of cell furthest from start<br>
+&bull; Cell coordinates [X,Y] are in lexicographic order
+<td>
+?- findDistance(L).<br>
+L = [[0, [[0, 3]]], <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [1, [[0, 2]]], <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [2, [[1, 2]]], <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [3, [[1, 1],[2,2]],<br>
+&nbsp; ..., [6, [[3, 2]]].
+</tr>
+</tr>
+
+<tr>
+<td> solve
+<td>
+&bull; True if maze is solvable, fails otherwise.
+<td>
+?- solve.<br>
+true.
+</tr>
+</tr>
+
+</table>
+
+
+
+
+<p>This is obviously a terse description; if you have further
+questions (once you have completed the rest of the assignment), ask the
+course staff.
+
+<h3>Testing</h3>
+
+We have provided some sample tests for you, to help with the extra
+credit portion. <i>To receive any extra credit you must get all of
+these tests to pass.</i> The tests will not be public on the submit
+server, but will be kept secret, so that you are not prevented from
+release testing the regular part of the project. There will also be
+some secret tests (e.g., handling forall and exists).
+<ul>
+<li> <a href="publicEval.pl">publicEval.pl</a>
+<li> <a href="publicVarsOf.pl">publicVarsOf.pl</a>
+<li> <a href="publicSat.pl">publicSat.pl</a>
+<li> <a href="publicEval.out">publicEval.out</a>
+<li> <a href="publicVarsOf.out">publicVarsOf.out</a>
+<li> <a href="publicSat.out">publicSat.out</a>
+ </ul>
+ 
+As described above, to execute a public test, you
+need to load both logic.pl and the public test file into
+the Prolog interpreter, then call the appropriate public test
+function for each logic.pl function you were required to
+implement.  The public test functions are:
+<ul>
+    <li> public_eval
+    <li> public_varsOf
+    <li> public_sat
+</ul>
+If you want to run these public tests using the <a
+href="goTest.pl">goTest.pl</a> public test driver, you will need to
+edit it to uncomment-out the three functions listed above.
+
+<h2>Hints</h2>
+
+<ul>
+<li> Unlike previous projects, you may be able to rely on
+Prolog's backtracking to find multiple possible solutions
+through multiple queries.
+<li> The Prolog functions <em>findall</em> will collect all
+results from a function using backtracking.  The function
+<em>setof</em> will, in addition, sort the result and remove
+duplicates. These functions are used in the public tests.
+</ul>
+
+
+<h2>Submission</h2>
+
+You can submit your project in two ways:
+
+<ul>
+
+<li>
+Submit your file logic.ml directly to the
+<a href="http://submit.cs.umd.edu/">submit server</a>
+by clicking on the submit link in the column "web submission".
+
+<p>
+
+<img src="submit1.jpg">
+</p><p>
+
+Next, use the submit dialog to submit your logic.ml file.
+
+</p><p>
+<img src="submit2.jpg">
+</p><p>
+
+Select your file using the "Browse" button,
+then press the "Submit project!" button.
+
+</p><p>
+
+<li>
+You may also submit directly by executing a Java program on a computer
+with Java and network access.  Use the submit.jar file
+from the archive <a href="p5.zip">p5.zip</a>,
+To submit, go to the directory containing your project, then either
+execute <a href="submit.rb">submit.rb</a> (preferred method) by typing:
+
+</p><center>
+
+<tt>
+ruby submit.rb
+</tt>
+</center>
+<p>
+
+or use the java jar directly using the following command:
+</p><center>
+
+<tt>
+java -jar submit.jar
+</tt>
+</center>
+<p>
+
+You will be asked to enter your class account and password, then
+all files in the directory (and its subdirectories) will be
+put in a jar file and submitted to the submit server.
+If your submission is successful you will see the message:
+</p><p>
+
+</p><center>
+<tt> Successful submission #<submission_number> received for project 5
+</submission_number></tt>
+</center>
+<p>
+
+</ul>
+
+<h2>Academic Integrity</h2>
+
+<p>
+The Campus Senate has adopted a policy asking students to include the
+following statement on each assignment in every course: "I pledge on
+my honor that I have not given or received any unauthorized assistance
+on this assignment."  Consequently your program is requested to
+contain this pledge in a comment near the top.
+
+</p><p>
+Please <b>carefully read</b> the academic honesty section of the
+course syllabus.  <b>Any evidence</b> of impermissible cooperation on
+projects, use of disallowed materials or resources, or unauthorized
+use of computer accounts, <b>will be submitted</b> to the Student
+Honor Council, which could result in an XF for the course, or
+suspension or expulsion from the University.  Be sure you understand
+what you are and what you are not permitted to do in regards to
+academic integrity when it comes to project assignments.  These
+policies apply to all students, and the Student Honor Council does not
+consider lack of knowledge of the policies to be a defense for
+violating them.  Full information is found in the course
+syllabus---please review it at this time.
+
+
+</p></li></td>
+</tr></tbody></table>
+
+</body></html>
